@@ -1,0 +1,55 @@
+ABI języka C
+============
+
+Bardzo dużo funkcji pomocniczych udostępnia nam standard POSIX oraz biblioteka standardowa C, jednak aby móc z nich korzystać
+z poziomu Assemblera trzeba znać interfejs binarny (ABI) języka C - sposób przekazywania argumentów, wywoływania funkcji, itp.
+
+32-bitowe (cdecl)
+-----------------
+Funkcja ``fun(a, b, c)`` zwraca typ int.
+
+Aby poprawnie ją wywołać, należy po kolei:
+ - odłożyć argumenty od końca, w tym wypadku najpierw ``c``, potem ``b``, potem ``a``
+ - zrobić ``call fun``
+ - usunąć argumenty ze stosu - ``add esp, 12`` (3 argumenty po 4 bajty; stos rośnie w dół, dlatego dodajemy)
+ - wykorzystać wartość znajdującą się w eax - tam zwróciła swój wynik funkcja
+
+Cały kod dla wywołania ``esi = fun(1,4,9)``:
+
+.. code-block:: nasm
+
+   push 9
+   push 4
+   push 1
+   call fun
+   add esp, 12
+   mov esi, eax
+
+Funkcje mogą do woli zmieniać te rejestry:
+
+ - ``eax``
+ - ``ecx``
+ - ``edx``
+
+Natomiast pozostałe rejestry pozostaną bez zmian po powrocie z funkcji, więc przed wywołaniem nie trzeba ich zapisywać.
+
+64-bitowe (SysV AMD64)
+----------------------
+
+Konwencja System V AMD64 ABI znacznie różni się od cdecl, głównie za sprawą znacznie większej liczby rejestów w nowszej architekturze.
+
+Pierwsze sześć argumentów całkowitych/wskaźników jest przekazywanych w rejestrach:
+
+1. ``rdi``
+2. ``rsi``
+3. ``rdx``
+4. ``rcx`` (``r10`` w wywołaniach systemowych linuxa)
+5. ``r8``
+6. ``r9``
+
+Pozostałe argumenty umieszczane są na stosie od prawej do lewej, tak jak w cdecl.
+Zwracana wartość jest natomiast w rejestrach rax, a także rdx jeżeli potrzebne jest 128 bitów.
+Dodatkowo stos musi być wyrównany do granicy 16 bajtów (kwestia wydajności), a pierwsze 128 bajtów nieużywanej części stosu może być
+dowolnie używane przez funkcję jako tymczasowy bufor pamięci.
+
+Funkcje nie mogą zmienić wartości rejestrów rbp, rbx, r12-r15, a na reszcie mogą wykonywać dowolne operacje.

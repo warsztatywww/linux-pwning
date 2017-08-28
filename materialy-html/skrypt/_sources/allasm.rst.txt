@@ -1,0 +1,4 @@
+Instrukcje assemblera
+=====================
+
+.. include:: asms/cpu.rst

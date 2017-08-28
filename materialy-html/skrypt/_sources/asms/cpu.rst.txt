@@ -1,0 +1,76 @@
+Podstawowe operacje logiczne, arytmetyczne i powiązane
+------------------------------------------------------
+
+Podstawowa składnia asm:
+
+.. code-block:: nasm
+
+    ; To jest komentarz
+    mov eax, 7 ; ustaw eax na 7
+    mov eax, ebx ; ustaw eax na wartość ebx
+    mov eax, [8] ; ustaw eax na wartość z pamięci pod adresem z 8
+    mov eax, [ebx] ; ustaw ebx na wartość z pamięci pod adresem odczytanym z ebx
+    mov eax, [ebx + ecx*4 + 128] ; ustaw eax na wartość z pamięci pod adresem
+    ; obliczonym z wyrażenia [...] (wyrażenia są bardzo ograniczone)
+
+|
+|
+
+- ``mov CEL, ŹRÓDŁO`` - skopiuj wartość ze źródła do celu (mogą być to rejestry, lokalizacje w pamięci lub konkretne wartości
+- ``add CEL, ŹRÓDŁO`` - dodaje źródło do celu
+- ``sub CEL, ŹRÓDŁO`` - odejmuje źródło od celu
+- ``shl/shr CEL, ŹRÓDŁO`` - wykonuje przesunięcie bitowe w lewo/prawo na celu o źródło bitów
+- ``xchg A, B`` - zamienia A z B (muszą być to rejestry bądź rejestr i miejsce w pamięci)
+- ``lea CEL, ADRES`` - ADRES podaje się jak miejsce w pamięci, ale jest ono obliczane i zapisywane do celu tak jak robi to ``mov``
+- ``mul B`` - mnoży (unsigned) rax przez B, zapisuje wynik do rdx(wyższe bity) i rax(niższe bity)
+- ``imul B`` - tak jak mul, ale wykonuje mnożenie ze znakiem (signed)
+- ``imul CEL, ŹRÓDŁO`` - mnoży cel przez źródło, zapisuje wynik do celu
+- ``imul CEL, A, B`` - mnoży A przez B i zapisuje do celu
+- ``div B`` - dzieli(unsigned) rdx:rax przez B, zapisuje część całkowitą do rdx, a resztę do eax
+- ``idiv B`` - tak jak div, ale dzieli ze znakiem (signed)
+- ``neg A`` - wykonuje negację A, zgodnie z metodą 2's complement (A <- ~A + 1)
+- ``cdq`` - Convert dword to qword - rozszerza znak rax do rdx
+- ``inc A`` - zwiększa A o 1
+- ``dec A`` - zmniejsza A o 1
+- ``and/or/xor CEL, ŹRÓDŁO`` - wykonuje odpowiednią operację logiczną i zapisuje wynik do celu
+- ``not A`` - neguje wszystkie bity A
+
+|
+|
+
+- ``push A`` - odkłada wartość/rejestr A na stos
+- ``pop A`` - zdejmuje wartość ze stosu i zapisuje do A
+- ``pushf`` - odkłada flagi procesora na stosie
+- ``popf`` - zdejmuje flagi procesora ze stosu
+
+|
+|
+
+- ``nop`` - nic nie robi :D
+- ``naz.wa:`` - etykieta, oznacza adres kolejnej instrukcji; jeżeli zaczyna się kropką, to jest lokalna dla nadrzędnej etykiety
+- ``jmp ADRES`` - wykonuje skok do adresu (ustawia rip na adres)
+- ``call ADRES`` - odkłada adres następnej instrukcji na stos, a następnie skacze do adresu (jak wywołanie funkcji)
+- ``ret`` - zdejmuje adres ze stosu i do niego skacze (jak powrót z funkcji)
+- ``int BAJT`` - wywołuje przerwanie programowe o podanym numerze (1-bajtowym)
+- (tylko 64-bitowe) ``syscall`` - obsługuje syscall zgodnie z interfejsem systemu operacyjnego
+
+|
+|
+
+- ``test A, B`` - wykonuje and bitowy na A i B, flaga znaku jest ustawiana na najbardziej znaczący bit, zera jeżeli wynik jest zerem, parzystości, gdy wynik ma parzystą liczbę jedynek
+- ``cmp A, B`` - porównuje A z B i ustawia odpowiednie flagi
+- ``je/jz ADRES`` - skacze gdy ZF=1 (cmp: A==B)
+- ``jne/jnz ADRES`` - skacze gdy ZF=0 (cmp: A!=B)
+- ``jg ADRES`` - skacze gdy SF=OF;ZF=0 (cmp: A>B)
+- ``jge ADRES`` - skacze gdy SF=OF;ZF=1 (cmp: A>=B)
+- ``ja ADRES`` - tak jak jg, ale porównanie bez znaku
+- ``jae ADRES`` - tak jak jge, ale porównanie bez znaku
+- ``jl ADRES`` - skacze gdy SF!=OF (cmp: A>B)
+- ``jle ADRES`` - skacze gdy SF!=OF lub ZF=1 (cmp: A>=B)
+- ``jb(e) ADRES`` - są dla jl i jle tak jak ja i jae dla jg i jge
+- ``jo ADRES`` - skacze gdy OF=1 (overflow flag)
+- ``jno ADRES`` - skacze gdy OF=0 (overflow flag)
+- ``js ADRES`` - skacze gdy SF=1 (sign flag)
+- ``jns ADRES`` - skacze gdy SF=0 (sign flag)
+- ``loop ADRES`` - zmniejsza rcx o 1, skacze jeżeli rcx jest jeszcze większe od 0
+- ``loop(e/ne/z/nz)`` - jeżeli warunek jest spełniony to działa tak jak loop, jeżeli nie to jest pomijana

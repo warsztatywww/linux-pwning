@@ -1,0 +1,324 @@
+
+
+<!DOCTYPE html>
+<!--[if IE 8]><html class="no-js lt-ie9" lang="en" > <![endif]-->
+<!--[if gt IE 8]><!--> <html class="no-js" lang="en" > <!--<![endif]-->
+<head>
+  <meta charset="utf-8">
+  
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  
+  <title>Instrukcje assemblera &mdash; WWW13 PWNing 1 - dokumentacja</title>
+  
+
+  
+  
+  
+  
+
+  
+
+  
+  
+    
+
+  
+
+  
+  
+    <link rel="stylesheet" href="_static/css/theme.css" type="text/css" />
+  
+
+  
+
+  
+        <link rel="index" title="Indeks"
+              href="genindex.html"/>
+        <link rel="search" title="Szukaj" href="search.html"/>
+    <link rel="top" title="WWW13 PWNing 1 - dokumentacja" href="index.html"/>
+        <link rel="next" title="Architektura procesora" href="cpu.html"/>
+        <link rel="prev" title="PWNing Linux x86/x64" href="index.html"/> 
+
+  
+  <script src="_static/js/modernizr.min.js"></script>
+
+</head>
+
+<body class="wy-body-for-nav" role="document">
+
+   
+  <div class="wy-grid-for-nav">
+
+    
+    <nav data-toggle="wy-nav-shift" class="wy-nav-side">
+      <div class="wy-side-scroll">
+        <div class="wy-side-nav-search">
+          
+
+          
+            <a href="index.html" class="icon icon-home"> WWW13 PWNing
+          
+
+          
+          </a>
+
+          
+            
+            
+              <div class="version">
+                1
+              </div>
+            
+          
+
+          
+<div role="search">
+  <form id="rtd-search-form" class="wy-form" action="search.html" method="get">
+    <input type="text" name="q" placeholder="Search docs" />
+    <input type="hidden" name="check_keywords" value="yes" />
+    <input type="hidden" name="area" value="default" />
+  </form>
+</div>
+
+          
+        </div>
+
+        <div class="wy-menu wy-menu-vertical" data-spy="affix" role="navigation" aria-label="main navigation">
+          
+            
+            
+              
+            
+            
+              <ul class="current">
+<li class="toctree-l1 current"><a class="current reference internal" href="#">Instrukcje assemblera</a><ul>
+<li class="toctree-l2"><a class="reference internal" href="#podstawowe-operacje-logiczne-arytmetyczne-i-powiazane">Podstawowe operacje logiczne, arytmetyczne i powiązane</a></li>
+</ul>
+</li>
+<li class="toctree-l1"><a class="reference internal" href="cpu.html">Architektura procesora</a></li>
+<li class="toctree-l1"><a class="reference internal" href="cabi.html">ABI języka C</a></li>
+<li class="toctree-l1"><a class="reference internal" href="linux.html">Linux</a></li>
+</ul>
+
+            
+          
+        </div>
+      </div>
+    </nav>
+
+    <section data-toggle="wy-nav-shift" class="wy-nav-content-wrap">
+
+      
+      <nav class="wy-nav-top" role="navigation" aria-label="top navigation">
+        
+          <i data-toggle="wy-nav-top" class="fa fa-bars"></i>
+          <a href="index.html">WWW13 PWNing</a>
+        
+      </nav>
+
+
+      
+      <div class="wy-nav-content">
+        <div class="rst-content">
+          
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+<div role="navigation" aria-label="breadcrumbs navigation">
+
+  <ul class="wy-breadcrumbs">
+    
+      <li><a href="index.html">Docs</a> &raquo;</li>
+        
+      <li>Instrukcje assemblera</li>
+    
+    
+      <li class="wy-breadcrumbs-aside">
+        
+            
+            <a href="_sources/allasm.rst.txt" rel="nofollow"> View page source</a>
+          
+        
+      </li>
+    
+  </ul>
+
+  
+  <hr/>
+</div>
+          <div role="main" class="document" itemscope="itemscope" itemtype="http://schema.org/Article">
+           <div itemprop="articleBody">
+            
+  <div class="section" id="instrukcje-assemblera">
+<h1>Instrukcje assemblera<a class="headerlink" href="#instrukcje-assemblera" title="Stały odnośnik do tego nagłówka">¶</a></h1>
+<div class="section" id="podstawowe-operacje-logiczne-arytmetyczne-i-powiazane">
+<h2>Podstawowe operacje logiczne, arytmetyczne i powiązane<a class="headerlink" href="#podstawowe-operacje-logiczne-arytmetyczne-i-powiazane" title="Stały odnośnik do tego nagłówka">¶</a></h2>
+<p>Podstawowa składnia asm:</p>
+<div class="highlight-nasm"><div class="highlight"><pre><span></span><span class="c1">; To jest komentarz</span>
+<span class="nf">mov</span> <span class="nb">eax</span><span class="p">,</span> <span class="mi">7</span> <span class="c1">; ustaw eax na 7</span>
+<span class="nf">mov</span> <span class="nb">eax</span><span class="p">,</span> <span class="nb">ebx</span> <span class="c1">; ustaw eax na wartość ebx</span>
+<span class="nf">mov</span> <span class="nb">eax</span><span class="p">,</span> <span class="p">[</span><span class="mi">8</span><span class="p">]</span> <span class="c1">; ustaw eax na wartość z pamięci pod adresem z 8</span>
+<span class="nf">mov</span> <span class="nb">eax</span><span class="p">,</span> <span class="p">[</span><span class="nb">ebx</span><span class="p">]</span> <span class="c1">; ustaw ebx na wartość z pamięci pod adresem odczytanym z ebx</span>
+<span class="nf">mov</span> <span class="nb">eax</span><span class="p">,</span> <span class="p">[</span><span class="nb">ebx</span> <span class="o">+</span> <span class="nb">ecx</span><span class="o">*</span><span class="mi">4</span> <span class="o">+</span> <span class="mi">128</span><span class="p">]</span> <span class="c1">; ustaw eax na wartość z pamięci pod adresem</span>
+<span class="c1">; obliczonym z wyrażenia [...] (wyrażenia są bardzo ograniczone)</span>
+</pre></div>
+</div>
+<div class="line-block">
+<div class="line"><br /></div>
+<div class="line"><br /></div>
+</div>
+<ul class="simple">
+<li><code class="docutils literal"><span class="pre">mov</span> <span class="pre">CEL,</span> <span class="pre">ŹRÓDŁO</span></code> - skopiuj wartość ze źródła do celu (mogą być to rejestry, lokalizacje w pamięci lub konkretne wartości</li>
+<li><code class="docutils literal"><span class="pre">add</span> <span class="pre">CEL,</span> <span class="pre">ŹRÓDŁO</span></code> - dodaje źródło do celu</li>
+<li><code class="docutils literal"><span class="pre">sub</span> <span class="pre">CEL,</span> <span class="pre">ŹRÓDŁO</span></code> - odejmuje źródło od celu</li>
+<li><code class="docutils literal"><span class="pre">shl/shr</span> <span class="pre">CEL,</span> <span class="pre">ŹRÓDŁO</span></code> - wykonuje przesunięcie bitowe w lewo/prawo na celu o źródło bitów</li>
+<li><code class="docutils literal"><span class="pre">xchg</span> <span class="pre">A,</span> <span class="pre">B</span></code> - zamienia A z B (muszą być to rejestry bądź rejestr i miejsce w pamięci)</li>
+<li><code class="docutils literal"><span class="pre">lea</span> <span class="pre">CEL,</span> <span class="pre">ADRES</span></code> - ADRES podaje się jak miejsce w pamięci, ale jest ono obliczane i zapisywane do celu tak jak robi to <code class="docutils literal"><span class="pre">mov</span></code></li>
+<li><code class="docutils literal"><span class="pre">mul</span> <span class="pre">B</span></code> - mnoży (unsigned) rax przez B, zapisuje wynik do rdx(wyższe bity) i rax(niższe bity)</li>
+<li><code class="docutils literal"><span class="pre">imul</span> <span class="pre">B</span></code> - tak jak mul, ale wykonuje mnożenie ze znakiem (signed)</li>
+<li><code class="docutils literal"><span class="pre">imul</span> <span class="pre">CEL,</span> <span class="pre">ŹRÓDŁO</span></code> - mnoży cel przez źródło, zapisuje wynik do celu</li>
+<li><code class="docutils literal"><span class="pre">imul</span> <span class="pre">CEL,</span> <span class="pre">A,</span> <span class="pre">B</span></code> - mnoży A przez B i zapisuje do celu</li>
+<li><code class="docutils literal"><span class="pre">div</span> <span class="pre">B</span></code> - dzieli(unsigned) rdx:rax przez B, zapisuje część całkowitą do rdx, a resztę do eax</li>
+<li><code class="docutils literal"><span class="pre">idiv</span> <span class="pre">B</span></code> - tak jak div, ale dzieli ze znakiem (signed)</li>
+<li><code class="docutils literal"><span class="pre">neg</span> <span class="pre">A</span></code> - wykonuje negację A, zgodnie z metodą 2’s complement (A &lt;- ~A + 1)</li>
+<li><code class="docutils literal"><span class="pre">cdq</span></code> - Convert dword to qword - rozszerza znak rax do rdx</li>
+<li><code class="docutils literal"><span class="pre">inc</span> <span class="pre">A</span></code> - zwiększa A o 1</li>
+<li><code class="docutils literal"><span class="pre">dec</span> <span class="pre">A</span></code> - zmniejsza A o 1</li>
+<li><code class="docutils literal"><span class="pre">and/or/xor</span> <span class="pre">CEL,</span> <span class="pre">ŹRÓDŁO</span></code> - wykonuje odpowiednią operację logiczną i zapisuje wynik do celu</li>
+<li><code class="docutils literal"><span class="pre">not</span> <span class="pre">A</span></code> - neguje wszystkie bity A</li>
+</ul>
+<div class="line-block">
+<div class="line"><br /></div>
+<div class="line"><br /></div>
+</div>
+<ul class="simple">
+<li><code class="docutils literal"><span class="pre">push</span> <span class="pre">A</span></code> - odkłada wartość/rejestr A na stos</li>
+<li><code class="docutils literal"><span class="pre">pop</span> <span class="pre">A</span></code> - zdejmuje wartość ze stosu i zapisuje do A</li>
+<li><code class="docutils literal"><span class="pre">pushf</span></code> - odkłada flagi procesora na stosie</li>
+<li><code class="docutils literal"><span class="pre">popf</span></code> - zdejmuje flagi procesora ze stosu</li>
+</ul>
+<div class="line-block">
+<div class="line"><br /></div>
+<div class="line"><br /></div>
+</div>
+<ul class="simple">
+<li><code class="docutils literal"><span class="pre">nop</span></code> - nic nie robi :D</li>
+<li><code class="docutils literal"><span class="pre">naz.wa:</span></code> - etykieta, oznacza adres kolejnej instrukcji; jeżeli zaczyna się kropką, to jest lokalna dla nadrzędnej etykiety</li>
+<li><code class="docutils literal"><span class="pre">jmp</span> <span class="pre">ADRES</span></code> - wykonuje skok do adresu (ustawia rip na adres)</li>
+<li><code class="docutils literal"><span class="pre">call</span> <span class="pre">ADRES</span></code> - odkłada adres następnej instrukcji na stos, a następnie skacze do adresu (jak wywołanie funkcji)</li>
+<li><code class="docutils literal"><span class="pre">ret</span></code> - zdejmuje adres ze stosu i do niego skacze (jak powrót z funkcji)</li>
+<li><code class="docutils literal"><span class="pre">int</span> <span class="pre">BAJT</span></code> - wywołuje przerwanie programowe o podanym numerze (1-bajtowym)</li>
+<li>(tylko 64-bitowe) <code class="docutils literal"><span class="pre">syscall</span></code> - obsługuje syscall zgodnie z interfejsem systemu operacyjnego</li>
+</ul>
+<div class="line-block">
+<div class="line"><br /></div>
+<div class="line"><br /></div>
+</div>
+<ul class="simple">
+<li><code class="docutils literal"><span class="pre">test</span> <span class="pre">A,</span> <span class="pre">B</span></code> - wykonuje and bitowy na A i B, flaga znaku jest ustawiana na najbardziej znaczący bit, zera jeżeli wynik jest zerem, parzystości, gdy wynik ma parzystą liczbę jedynek</li>
+<li><code class="docutils literal"><span class="pre">cmp</span> <span class="pre">A,</span> <span class="pre">B</span></code> - porównuje A z B i ustawia odpowiednie flagi</li>
+<li><code class="docutils literal"><span class="pre">je/jz</span> <span class="pre">ADRES</span></code> - skacze gdy ZF=1 (cmp: A==B)</li>
+<li><code class="docutils literal"><span class="pre">jne/jnz</span> <span class="pre">ADRES</span></code> - skacze gdy ZF=0 (cmp: A!=B)</li>
+<li><code class="docutils literal"><span class="pre">jg</span> <span class="pre">ADRES</span></code> - skacze gdy SF=OF;ZF=0 (cmp: A&gt;B)</li>
+<li><code class="docutils literal"><span class="pre">jge</span> <span class="pre">ADRES</span></code> - skacze gdy SF=OF;ZF=1 (cmp: A&gt;=B)</li>
+<li><code class="docutils literal"><span class="pre">ja</span> <span class="pre">ADRES</span></code> - tak jak jg, ale porównanie bez znaku</li>
+<li><code class="docutils literal"><span class="pre">jae</span> <span class="pre">ADRES</span></code> - tak jak jge, ale porównanie bez znaku</li>
+<li><code class="docutils literal"><span class="pre">jl</span> <span class="pre">ADRES</span></code> - skacze gdy SF!=OF (cmp: A&gt;B)</li>
+<li><code class="docutils literal"><span class="pre">jle</span> <span class="pre">ADRES</span></code> - skacze gdy SF!=OF lub ZF=1 (cmp: A&gt;=B)</li>
+<li><code class="docutils literal"><span class="pre">jb(e)</span> <span class="pre">ADRES</span></code> - są dla jl i jle tak jak ja i jae dla jg i jge</li>
+<li><code class="docutils literal"><span class="pre">jo</span> <span class="pre">ADRES</span></code> - skacze gdy OF=1 (overflow flag)</li>
+<li><code class="docutils literal"><span class="pre">jno</span> <span class="pre">ADRES</span></code> - skacze gdy OF=0 (overflow flag)</li>
+<li><code class="docutils literal"><span class="pre">js</span> <span class="pre">ADRES</span></code> - skacze gdy SF=1 (sign flag)</li>
+<li><code class="docutils literal"><span class="pre">jns</span> <span class="pre">ADRES</span></code> - skacze gdy SF=0 (sign flag)</li>
+<li><code class="docutils literal"><span class="pre">loop</span> <span class="pre">ADRES</span></code> - zmniejsza rcx o 1, skacze jeżeli rcx jest jeszcze większe od 0</li>
+<li><code class="docutils literal"><span class="pre">loop(e/ne/z/nz)</span></code> - jeżeli warunek jest spełniony to działa tak jak loop, jeżeli nie to jest pomijana</li>
+</ul>
+</div>
+</div>
+
+
+           </div>
+           <div class="articleComments">
+            
+           </div>
+          </div>
+          <footer>
+  
+    <div class="rst-footer-buttons" role="navigation" aria-label="footer navigation">
+      
+        <a href="cpu.html" class="btn btn-neutral float-right" title="Architektura procesora" accesskey="n" rel="next">Next <span class="fa fa-arrow-circle-right"></span></a>
+      
+      
+        <a href="index.html" class="btn btn-neutral" title="PWNing Linux x86/x64" accesskey="p" rel="prev"><span class="fa fa-arrow-circle-left"></span> Previous</a>
+      
+    </div>
+  
+
+  <hr/>
+
+  <div role="contentinfo">
+    <p>
+        &copy; Copyright 2017, Jakub Szewczyk, Grzegorz Uriasz.
+
+    </p>
+  </div>
+  Built with <a href="http://sphinx-doc.org/">Sphinx</a> using a <a href="https://github.com/snide/sphinx_rtd_theme">theme</a> provided by <a href="https://readthedocs.org">Read the Docs</a>. 
+
+</footer>
+
+        </div>
+      </div>
+
+    </section>
+
+  </div>
+  
+
+
+  
+
+    <script type="text/javascript">
+        var DOCUMENTATION_OPTIONS = {
+            URL_ROOT:'./',
+            VERSION:'1',
+            COLLAPSE_INDEX:false,
+            FILE_SUFFIX:'.html',
+            HAS_SOURCE:  true,
+            SOURCELINK_SUFFIX: '.txt'
+        };
+    </script>
+      <script type="text/javascript" src="_static/jquery.js"></script>
+      <script type="text/javascript" src="_static/underscore.js"></script>
+      <script type="text/javascript" src="_static/doctools.js"></script>
+      <script type="text/javascript" src="_static/translations.js"></script>
+
+  
+
+  
+  
+    <script type="text/javascript" src="_static/js/theme.js"></script>
+  
+
+  
+  
+  <script type="text/javascript">
+      jQuery(function () {
+          SphinxRtdTheme.StickyNav.enable();
+      });
+  </script>
+   
+
+</body>
+</html>

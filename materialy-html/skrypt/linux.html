@@ -1,0 +1,307 @@
+
+
+<!DOCTYPE html>
+<!--[if IE 8]><html class="no-js lt-ie9" lang="en" > <![endif]-->
+<!--[if gt IE 8]><!--> <html class="no-js" lang="en" > <!--<![endif]-->
+<head>
+  <meta charset="utf-8">
+  
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  
+  <title>Linux &mdash; WWW13 PWNing 1 - dokumentacja</title>
+  
+
+  
+  
+  
+  
+
+  
+
+  
+  
+    
+
+  
+
+  
+  
+    <link rel="stylesheet" href="_static/css/theme.css" type="text/css" />
+  
+
+  
+
+  
+        <link rel="index" title="Indeks"
+              href="genindex.html"/>
+        <link rel="search" title="Szukaj" href="search.html"/>
+    <link rel="top" title="WWW13 PWNing 1 - dokumentacja" href="index.html"/>
+        <link rel="prev" title="ABI języka C" href="cabi.html"/> 
+
+  
+  <script src="_static/js/modernizr.min.js"></script>
+
+</head>
+
+<body class="wy-body-for-nav" role="document">
+
+   
+  <div class="wy-grid-for-nav">
+
+    
+    <nav data-toggle="wy-nav-shift" class="wy-nav-side">
+      <div class="wy-side-scroll">
+        <div class="wy-side-nav-search">
+          
+
+          
+            <a href="index.html" class="icon icon-home"> WWW13 PWNing
+          
+
+          
+          </a>
+
+          
+            
+            
+              <div class="version">
+                1
+              </div>
+            
+          
+
+          
+<div role="search">
+  <form id="rtd-search-form" class="wy-form" action="search.html" method="get">
+    <input type="text" name="q" placeholder="Search docs" />
+    <input type="hidden" name="check_keywords" value="yes" />
+    <input type="hidden" name="area" value="default" />
+  </form>
+</div>
+
+          
+        </div>
+
+        <div class="wy-menu wy-menu-vertical" data-spy="affix" role="navigation" aria-label="main navigation">
+          
+            
+            
+              
+            
+            
+              <ul class="current">
+<li class="toctree-l1"><a class="reference internal" href="allasm.html">Instrukcje assemblera</a></li>
+<li class="toctree-l1"><a class="reference internal" href="cpu.html">Architektura procesora</a></li>
+<li class="toctree-l1"><a class="reference internal" href="cabi.html">ABI języka C</a></li>
+<li class="toctree-l1 current"><a class="current reference internal" href="#">Linux</a><ul>
+<li class="toctree-l2"><a class="reference internal" href="#uzytkownicy">Użytkownicy</a></li>
+<li class="toctree-l2"><a class="reference internal" href="#system-plikow">System plików</a></li>
+<li class="toctree-l2"><a class="reference internal" href="#pliki-wykonywalne">Pliki wykonywalne</a></li>
+<li class="toctree-l2"><a class="reference internal" href="#biblioteki-wspoldzielone">Biblioteki współdzielone</a></li>
+<li class="toctree-l2"><a class="reference internal" href="#aslr">ASLR</a></li>
+</ul>
+</li>
+</ul>
+
+            
+          
+        </div>
+      </div>
+    </nav>
+
+    <section data-toggle="wy-nav-shift" class="wy-nav-content-wrap">
+
+      
+      <nav class="wy-nav-top" role="navigation" aria-label="top navigation">
+        
+          <i data-toggle="wy-nav-top" class="fa fa-bars"></i>
+          <a href="index.html">WWW13 PWNing</a>
+        
+      </nav>
+
+
+      
+      <div class="wy-nav-content">
+        <div class="rst-content">
+          
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+<div role="navigation" aria-label="breadcrumbs navigation">
+
+  <ul class="wy-breadcrumbs">
+    
+      <li><a href="index.html">Docs</a> &raquo;</li>
+        
+      <li>Linux</li>
+    
+    
+      <li class="wy-breadcrumbs-aside">
+        
+            
+            <a href="_sources/linux.rst.txt" rel="nofollow"> View page source</a>
+          
+        
+      </li>
+    
+  </ul>
+
+  
+  <hr/>
+</div>
+          <div role="main" class="document" itemscope="itemscope" itemtype="http://schema.org/Article">
+           <div itemprop="articleBody">
+            
+  <div class="section" id="linux">
+<h1>Linux<a class="headerlink" href="#linux" title="Stały odnośnik do tego nagłówka">¶</a></h1>
+<p>Na tych warsztatach będziemy zajmowali się bezpieczeństwem aplikacji działających na systemie Linux,
+dlatego warto wiedzieć o nim jak najwięcej.</p>
+<div class="section" id="uzytkownicy">
+<h2>Użytkownicy<a class="headerlink" href="#uzytkownicy" title="Stały odnośnik do tego nagłówka">¶</a></h2>
+<p>Na Linuxie każde konto użytkownika ma swój unikatowy numer - UID. Specjalne jest tylko konto <code class="docutils literal"><span class="pre">root</span></code> o numerze 0, które
+posiada uprawnienia „administratorskie” - ma dostęp do prawie wszystkiego, niezależnie od reszty zabezpieczeń.
+Konta mają swoje definicje w pliku <code class="docutils literal"><span class="pre">/etc/passwd</span></code>, a hashe haseł trzymane są w pliku <code class="docutils literal"><span class="pre">/etc/shadow</span></code>.</p>
+<p>Każde konto może mieć przypisane jedną lub więcej grup do których należy, z czego jedna z tych grup jest ustawiona jako główna.
+Grupy zdefiniowane są w pliku <code class="docutils literal"><span class="pre">/etc/group</span></code>.</p>
+</div>
+<div class="section" id="system-plikow">
+<h2>System plików<a class="headerlink" href="#system-plikow" title="Stały odnośnik do tego nagłówka">¶</a></h2>
+<p>System plików na Linuxie ma pojedyńczy korzeń - folder <code class="docutils literal"><span class="pre">/</span></code>. Pod nim zamontowana jest nasza partycja root,
+która zawiera kolejne pliki i foldery, a każdy folder może być punktem montowania dla innej partycji.
+Linux podąża za filozofią UNIXa - „wszystko jest plikiem”. Dlatego istnieją specjalne foldery, takie jak
+<code class="docutils literal"><span class="pre">/dev</span></code>, <code class="docutils literal"><span class="pre">/proc</span></code>, <code class="docutils literal"><span class="pre">/sys</span></code>, które nie są zapisane na żadnym dysku, a zamiast tego są interfejsem do jądra
+systemu oraz innych programów i urządzeń.</p>
+<p>Na systemie Windows istnieje odpowiednik tych systemów plików, który
+nazywa się NT Object Manager, aby się do niego odwołać należy użyć specjalnej ścieżki <code class="docutils literal"><span class="pre">\\??\</span></code>, natomiast
+dostęp tam jest trudniejszy i nie można go mieć przez zwykłą przeglądarkę plików.</p>
+<p>Każdy plik i katalog mogą mieć szereg przypisanych uprawnień. Wszystko ma swojego właściciela i grupę - UID (User ID) i GID (Group ID).
+Uprawnienia podstawowe to RWX - Read(4) Write(2) Execute(1), każdy plik/katalog ma 4 zestawy takich trójek bitów - specjalny, uprawnienia
+właściciela, grupy i innych. Zwykle podaje się je w formacie ósemkowym - np. 0754 daje wszystkie uprawnienia właścicielowi, odczyt i wykonanie
+grupie oraz tylko odczyt innym.</p>
+<p>Uprawnienia specjalne to setuid, setgid, sticky. SetUID i SetGID przy wykonaniu danego pliku ustawiają odpowienio właściciela i grupę procesu
+na te pliku, jeżeli odpowiednie bity są ustawione. Jeżeli katalog posiada bit Sticky, to uniemożliwia to usuwanie nieswoich plików wszystkim poza rootem,
+nawet jeżeli posiada się uprawnienia zapisu do katalogu, zabezpiecza się tak publiczne katalogi przed usuwaniem nieswoich plików.</p>
+<p>W Linuxie istnieją też inne metody kontroli dostępu do plików, takie jak Access Control Lists i rozszerzone atrybuty plików.</p>
+</div>
+<div class="section" id="pliki-wykonywalne">
+<h2>Pliki wykonywalne<a class="headerlink" href="#pliki-wykonywalne" title="Stały odnośnik do tego nagłówka">¶</a></h2>
+<p>Bez zagłębiania się w zbędne nam szczegóły, Linux korzysta z formatu plików ELF (Executable and Linkable Format). Pliki wykonywalne zwykle
+nie mają żadnego rozszerzenia, a biblioteki współdzielone mają rozszerzenie <code class="docutils literal"><span class="pre">.so</span></code>.
+(Na Windowsie format to PE(Portable Executable), <code class="docutils literal"><span class="pre">.exe</span></code> i <code class="docutils literal"><span class="pre">.dll</span></code>)
+Pliki ELF składają się z sekcji, najważniejsze to:</p>
+<blockquote>
+<div><ul class="simple">
+<li><code class="docutils literal"><span class="pre">.text</span></code>: właściwy kod programu</li>
+<li><code class="docutils literal"><span class="pre">.data</span></code>: dane w programie (zmienne globalne, stałe, itp.)</li>
+<li><code class="docutils literal"><span class="pre">.rodata</span></code>: dane tylko do odczytu, nie każdy kompilator generuje taką sekcję</li>
+<li><code class="docutils literal"><span class="pre">.bss</span></code>: dane, które są zerami - ta sekcja nie zawiera danych, a tylko podaje ich rozmiar, co znacznie zmniejsza
+rozmiar plików</li>
+<li><code class="docutils literal"><span class="pre">.eh_frame</span></code>: zawiera kod i dane do obsługi wyjątków w C++</li>
+<li><code class="docutils literal"><span class="pre">.init</span></code>, <code class="docutils literal"><span class="pre">.fini</span></code>: zawiera konstruktory i dekonstruktory statyczne (funkcje uruchamiane przed i po main() w C)</li>
+</ul>
+</div></blockquote>
+<p>Każda sekcja może być ustawiona jako dostępna do odczytu, zapisu i wykonywalna, co wpływa na ich zabezpieczenie w pamięci wirtualnej przez system.
+Poza tym sekcje mogą mieć też przypisane swoje adresy wirtualne, do których zostaną zmapowane przy uruchomieniu programu.</p>
+</div>
+<div class="section" id="biblioteki-wspoldzielone">
+<h2>Biblioteki współdzielone<a class="headerlink" href="#biblioteki-wspoldzielone" title="Stały odnośnik do tego nagłówka">¶</a></h2>
+<p>Są to specjalne pliki wykonywalne, które charakteryzują się kodem, który można wykonywać niezależnie od tego, gdzie zostanie
+umieszczony w pamięci (flaga -fPIC kompilatora, position independent code). Dzięki temu system może wczytać jedną kopię takiej biblioteki
+dla wszystkich potrzebujących jej programów.</p>
+<p>Aby to uzyskać, każdy program korzystający z bibliotek współdzielonych posiada tablice o nazwie Global Offset Table (GOT) i Procedure Linkage Table (PLT).
+Zawierają ona dane funkcji (i innych eksportowanych symboli), a w momencie uruchomienia programu system wypełnia ją
+adresami tych symboli we wczytanej bibliotece.</p>
+</div>
+<div class="section" id="aslr">
+<h2>ASLR<a class="headerlink" href="#aslr" title="Stały odnośnik do tego nagłówka">¶</a></h2>
+<p>ASLR (Address Space Layout Randomization) to jedna z metod zabezpieczania systemów operacyjnych, stosowana także przez Linuxa.
+Polega ona na tym, że pliki wykonywalne są kompilowane w trybie PIC, tak jak biblioteki współdzielone. Dzięki temu system
+może wylosować lokalizację wszystkich sekcji w pamięci wirtualnej, co bardzo utrudnia ataki wykorzystujące nadpisywanie danych w pamięci,
+do której nie powinno się mieć dostępu.</p>
+</div>
+</div>
+
+
+           </div>
+           <div class="articleComments">
+            
+           </div>
+          </div>
+          <footer>
+  
+    <div class="rst-footer-buttons" role="navigation" aria-label="footer navigation">
+      
+      
+        <a href="cabi.html" class="btn btn-neutral" title="ABI języka C" accesskey="p" rel="prev"><span class="fa fa-arrow-circle-left"></span> Previous</a>
+      
+    </div>
+  
+
+  <hr/>
+
+  <div role="contentinfo">
+    <p>
+        &copy; Copyright 2017, Jakub Szewczyk, Grzegorz Uriasz.
+
+    </p>
+  </div>
+  Built with <a href="http://sphinx-doc.org/">Sphinx</a> using a <a href="https://github.com/snide/sphinx_rtd_theme">theme</a> provided by <a href="https://readthedocs.org">Read the Docs</a>. 
+
+</footer>
+
+        </div>
+      </div>
+
+    </section>
+
+  </div>
+  
+
+
+  
+
+    <script type="text/javascript">
+        var DOCUMENTATION_OPTIONS = {
+            URL_ROOT:'./',
+            VERSION:'1',
+            COLLAPSE_INDEX:false,
+            FILE_SUFFIX:'.html',
+            HAS_SOURCE:  true,
+            SOURCELINK_SUFFIX: '.txt'
+        };
+    </script>
+      <script type="text/javascript" src="_static/jquery.js"></script>
+      <script type="text/javascript" src="_static/underscore.js"></script>
+      <script type="text/javascript" src="_static/doctools.js"></script>
+      <script type="text/javascript" src="_static/translations.js"></script>
+
+  
+
+  
+  
+    <script type="text/javascript" src="_static/js/theme.js"></script>
+  
+
+  
+  
+  <script type="text/javascript">
+      jQuery(function () {
+          SphinxRtdTheme.StickyNav.enable();
+      });
+  </script>
+   
+
+</body>
+</html>

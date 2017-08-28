@@ -1,0 +1,77 @@
+Linux
+=====
+
+Na tych warsztatach będziemy zajmowali się bezpieczeństwem aplikacji działających na systemie Linux,
+dlatego warto wiedzieć o nim jak najwięcej.
+
+Użytkownicy
+-----------
+
+Na Linuxie każde konto użytkownika ma swój unikatowy numer - UID. Specjalne jest tylko konto ``root`` o numerze 0, które
+posiada uprawnienia "administratorskie" - ma dostęp do prawie wszystkiego, niezależnie od reszty zabezpieczeń.
+Konta mają swoje definicje w pliku ``/etc/passwd``, a hashe haseł trzymane są w pliku ``/etc/shadow``.
+
+Każde konto może mieć przypisane jedną lub więcej grup do których należy, z czego jedna z tych grup jest ustawiona jako główna.
+Grupy zdefiniowane są w pliku ``/etc/group``.
+
+System plików
+-------------
+
+System plików na Linuxie ma pojedyńczy korzeń - folder ``/``. Pod nim zamontowana jest nasza partycja root,
+która zawiera kolejne pliki i foldery, a każdy folder może być punktem montowania dla innej partycji.
+Linux podąża za filozofią UNIXa - "wszystko jest plikiem". Dlatego istnieją specjalne foldery, takie jak
+``/dev``, ``/proc``, ``/sys``, które nie są zapisane na żadnym dysku, a zamiast tego są interfejsem do jądra
+systemu oraz innych programów i urządzeń.
+
+Na systemie Windows istnieje odpowiednik tych systemów plików, który
+nazywa się NT Object Manager, aby się do niego odwołać należy użyć specjalnej ścieżki ``\\??\``, natomiast
+dostęp tam jest trudniejszy i nie można go mieć przez zwykłą przeglądarkę plików.
+
+Każdy plik i katalog mogą mieć szereg przypisanych uprawnień. Wszystko ma swojego właściciela i grupę - UID (User ID) i GID (Group ID).
+Uprawnienia podstawowe to RWX - Read(4) Write(2) Execute(1), każdy plik/katalog ma 4 zestawy takich trójek bitów - specjalny, uprawnienia
+właściciela, grupy i innych. Zwykle podaje się je w formacie ósemkowym - np. 0754 daje wszystkie uprawnienia właścicielowi, odczyt i wykonanie
+grupie oraz tylko odczyt innym.
+
+Uprawnienia specjalne to setuid, setgid, sticky. SetUID i SetGID przy wykonaniu danego pliku ustawiają odpowienio właściciela i grupę procesu
+na te pliku, jeżeli odpowiednie bity są ustawione. Jeżeli katalog posiada bit Sticky, to uniemożliwia to usuwanie nieswoich plików wszystkim poza rootem,
+nawet jeżeli posiada się uprawnienia zapisu do katalogu, zabezpiecza się tak publiczne katalogi przed usuwaniem nieswoich plików.
+
+W Linuxie istnieją też inne metody kontroli dostępu do plików, takie jak Access Control Lists i rozszerzone atrybuty plików.
+
+Pliki wykonywalne
+-----------------
+
+Bez zagłębiania się w zbędne nam szczegóły, Linux korzysta z formatu plików ELF (Executable and Linkable Format). Pliki wykonywalne zwykle
+nie mają żadnego rozszerzenia, a biblioteki współdzielone mają rozszerzenie ``.so``.
+(Na Windowsie format to PE(Portable Executable), ``.exe`` i ``.dll``)
+Pliki ELF składają się z sekcji, najważniejsze to:
+
+ - ``.text``: właściwy kod programu
+ - ``.data``: dane w programie (zmienne globalne, stałe, itp.)
+ - ``.rodata``: dane tylko do odczytu, nie każdy kompilator generuje taką sekcję
+ - ``.bss``: dane, które są zerami - ta sekcja nie zawiera danych, a tylko podaje ich rozmiar, co znacznie zmniejsza
+   rozmiar plików
+ - ``.eh_frame``: zawiera kod i dane do obsługi wyjątków w C++
+ - ``.init``, ``.fini``: zawiera konstruktory i dekonstruktory statyczne (funkcje uruchamiane przed i po main() w C)
+
+Każda sekcja może być ustawiona jako dostępna do odczytu, zapisu i wykonywalna, co wpływa na ich zabezpieczenie w pamięci wirtualnej przez system.
+Poza tym sekcje mogą mieć też przypisane swoje adresy wirtualne, do których zostaną zmapowane przy uruchomieniu programu.
+
+Biblioteki współdzielone
+------------------------
+
+Są to specjalne pliki wykonywalne, które charakteryzują się kodem, który można wykonywać niezależnie od tego, gdzie zostanie
+umieszczony w pamięci (flaga -fPIC kompilatora, position independent code). Dzięki temu system może wczytać jedną kopię takiej biblioteki
+dla wszystkich potrzebujących jej programów.
+
+Aby to uzyskać, każdy program korzystający z bibliotek współdzielonych posiada tablice o nazwie Global Offset Table (GOT) i Procedure Linkage Table (PLT).
+Zawierają ona dane funkcji (i innych eksportowanych symboli), a w momencie uruchomienia programu system wypełnia ją
+adresami tych symboli we wczytanej bibliotece.
+
+ASLR
+----
+
+ASLR (Address Space Layout Randomization) to jedna z metod zabezpieczania systemów operacyjnych, stosowana także przez Linuxa.
+Polega ona na tym, że pliki wykonywalne są kompilowane w trybie PIC, tak jak biblioteki współdzielone. Dzięki temu system
+może wylosować lokalizację wszystkich sekcji w pamięci wirtualnej, co bardzo utrudnia ataki wykorzystujące nadpisywanie danych w pamięci,
+do której nie powinno się mieć dostępu.

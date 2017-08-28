@@ -1,0 +1,294 @@
+
+
+<!DOCTYPE html>
+<!--[if IE 8]><html class="no-js lt-ie9" lang="en" > <![endif]-->
+<!--[if gt IE 8]><!--> <html class="no-js" lang="en" > <!--<![endif]-->
+<head>
+  <meta charset="utf-8">
+  
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  
+  <title>ABI języka C &mdash; WWW13 PWNing 1 - dokumentacja</title>
+  
+
+  
+  
+  
+  
+
+  
+
+  
+  
+    
+
+  
+
+  
+  
+    <link rel="stylesheet" href="_static/css/theme.css" type="text/css" />
+  
+
+  
+
+  
+        <link rel="index" title="Indeks"
+              href="genindex.html"/>
+        <link rel="search" title="Szukaj" href="search.html"/>
+    <link rel="top" title="WWW13 PWNing 1 - dokumentacja" href="index.html"/>
+        <link rel="next" title="Linux" href="linux.html"/>
+        <link rel="prev" title="Architektura procesora" href="cpu.html"/> 
+
+  
+  <script src="_static/js/modernizr.min.js"></script>
+
+</head>
+
+<body class="wy-body-for-nav" role="document">
+
+   
+  <div class="wy-grid-for-nav">
+
+    
+    <nav data-toggle="wy-nav-shift" class="wy-nav-side">
+      <div class="wy-side-scroll">
+        <div class="wy-side-nav-search">
+          
+
+          
+            <a href="index.html" class="icon icon-home"> WWW13 PWNing
+          
+
+          
+          </a>
+
+          
+            
+            
+              <div class="version">
+                1
+              </div>
+            
+          
+
+          
+<div role="search">
+  <form id="rtd-search-form" class="wy-form" action="search.html" method="get">
+    <input type="text" name="q" placeholder="Search docs" />
+    <input type="hidden" name="check_keywords" value="yes" />
+    <input type="hidden" name="area" value="default" />
+  </form>
+</div>
+
+          
+        </div>
+
+        <div class="wy-menu wy-menu-vertical" data-spy="affix" role="navigation" aria-label="main navigation">
+          
+            
+            
+              
+            
+            
+              <ul class="current">
+<li class="toctree-l1"><a class="reference internal" href="allasm.html">Instrukcje assemblera</a></li>
+<li class="toctree-l1"><a class="reference internal" href="cpu.html">Architektura procesora</a></li>
+<li class="toctree-l1 current"><a class="current reference internal" href="#">ABI języka C</a><ul>
+<li class="toctree-l2"><a class="reference internal" href="#bitowe-cdecl">32-bitowe (cdecl)</a></li>
+<li class="toctree-l2"><a class="reference internal" href="#bitowe-sysv-amd64">64-bitowe (SysV AMD64)</a></li>
+</ul>
+</li>
+<li class="toctree-l1"><a class="reference internal" href="linux.html">Linux</a></li>
+</ul>
+
+            
+          
+        </div>
+      </div>
+    </nav>
+
+    <section data-toggle="wy-nav-shift" class="wy-nav-content-wrap">
+
+      
+      <nav class="wy-nav-top" role="navigation" aria-label="top navigation">
+        
+          <i data-toggle="wy-nav-top" class="fa fa-bars"></i>
+          <a href="index.html">WWW13 PWNing</a>
+        
+      </nav>
+
+
+      
+      <div class="wy-nav-content">
+        <div class="rst-content">
+          
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+<div role="navigation" aria-label="breadcrumbs navigation">
+
+  <ul class="wy-breadcrumbs">
+    
+      <li><a href="index.html">Docs</a> &raquo;</li>
+        
+      <li>ABI języka C</li>
+    
+    
+      <li class="wy-breadcrumbs-aside">
+        
+            
+            <a href="_sources/cabi.rst.txt" rel="nofollow"> View page source</a>
+          
+        
+      </li>
+    
+  </ul>
+
+  
+  <hr/>
+</div>
+          <div role="main" class="document" itemscope="itemscope" itemtype="http://schema.org/Article">
+           <div itemprop="articleBody">
+            
+  <div class="section" id="abi-jezyka-c">
+<h1>ABI języka C<a class="headerlink" href="#abi-jezyka-c" title="Stały odnośnik do tego nagłówka">¶</a></h1>
+<p>Bardzo dużo funkcji pomocniczych udostępnia nam standard POSIX oraz biblioteka standardowa C, jednak aby móc z nich korzystać
+z poziomu Assemblera trzeba znać interfejs binarny (ABI) języka C - sposób przekazywania argumentów, wywoływania funkcji, itp.</p>
+<div class="section" id="bitowe-cdecl">
+<h2>32-bitowe (cdecl)<a class="headerlink" href="#bitowe-cdecl" title="Stały odnośnik do tego nagłówka">¶</a></h2>
+<p>Funkcja <code class="docutils literal"><span class="pre">fun(a,</span> <span class="pre">b,</span> <span class="pre">c)</span></code> zwraca typ int.</p>
+<dl class="docutils">
+<dt>Aby poprawnie ją wywołać, należy po kolei:</dt>
+<dd><ul class="first last simple">
+<li>odłożyć argumenty od końca, w tym wypadku najpierw <code class="docutils literal"><span class="pre">c</span></code>, potem <code class="docutils literal"><span class="pre">b</span></code>, potem <code class="docutils literal"><span class="pre">a</span></code></li>
+<li>zrobić <code class="docutils literal"><span class="pre">call</span> <span class="pre">fun</span></code></li>
+<li>usunąć argumenty ze stosu - <code class="docutils literal"><span class="pre">add</span> <span class="pre">esp,</span> <span class="pre">12</span></code> (3 argumenty po 4 bajty; stos rośnie w dół, dlatego dodajemy)</li>
+<li>wykorzystać wartość znajdującą się w eax - tam zwróciła swój wynik funkcja</li>
+</ul>
+</dd>
+</dl>
+<p>Cały kod dla wywołania <code class="docutils literal"><span class="pre">esi</span> <span class="pre">=</span> <span class="pre">fun(1,4,9)</span></code>:</p>
+<div class="highlight-nasm"><div class="highlight"><pre><span></span><span class="nf">push</span> <span class="mi">9</span>
+<span class="nf">push</span> <span class="mi">4</span>
+<span class="nf">push</span> <span class="mi">1</span>
+<span class="nf">call</span> <span class="nv">fun</span>
+<span class="nf">add</span> <span class="nb">esp</span><span class="p">,</span> <span class="mi">12</span>
+<span class="nf">mov</span> <span class="nb">esi</span><span class="p">,</span> <span class="nb">eax</span>
+</pre></div>
+</div>
+<p>Funkcje mogą do woli zmieniać te rejestry:</p>
+<blockquote>
+<div><ul class="simple">
+<li><code class="docutils literal"><span class="pre">eax</span></code></li>
+<li><code class="docutils literal"><span class="pre">ecx</span></code></li>
+<li><code class="docutils literal"><span class="pre">edx</span></code></li>
+</ul>
+</div></blockquote>
+<p>Natomiast pozostałe rejestry pozostaną bez zmian po powrocie z funkcji, więc przed wywołaniem nie trzeba ich zapisywać.</p>
+</div>
+<div class="section" id="bitowe-sysv-amd64">
+<h2>64-bitowe (SysV AMD64)<a class="headerlink" href="#bitowe-sysv-amd64" title="Stały odnośnik do tego nagłówka">¶</a></h2>
+<p>Konwencja System V AMD64 ABI znacznie różni się od cdecl, głównie za sprawą znacznie większej liczby rejestów w nowszej architekturze.</p>
+<p>Pierwsze sześć argumentów całkowitych/wskaźników jest przekazywanych w rejestrach:</p>
+<ol class="arabic simple">
+<li><code class="docutils literal"><span class="pre">rdi</span></code></li>
+<li><code class="docutils literal"><span class="pre">rsi</span></code></li>
+<li><code class="docutils literal"><span class="pre">rdx</span></code></li>
+<li><code class="docutils literal"><span class="pre">rcx</span></code> (<code class="docutils literal"><span class="pre">r10</span></code> w wywołaniach systemowych linuxa)</li>
+<li><code class="docutils literal"><span class="pre">r8</span></code></li>
+<li><code class="docutils literal"><span class="pre">r9</span></code></li>
+</ol>
+<p>Pozostałe argumenty umieszczane są na stosie od prawej do lewej, tak jak w cdecl.
+Zwracana wartość jest natomiast w rejestrach rax, a także rdx jeżeli potrzebne jest 128 bitów.
+Dodatkowo stos musi być wyrównany do granicy 16 bajtów (kwestia wydajności), a pierwsze 128 bajtów nieużywanej części stosu może być
+dowolnie używane przez funkcję jako tymczasowy bufor pamięci.</p>
+<p>Funkcje nie mogą zmienić wartości rejestrów rbp, rbx, r12-r15, a na reszcie mogą wykonywać dowolne operacje.</p>
+</div>
+</div>
+
+
+           </div>
+           <div class="articleComments">
+            
+           </div>
+          </div>
+          <footer>
+  
+    <div class="rst-footer-buttons" role="navigation" aria-label="footer navigation">
+      
+        <a href="linux.html" class="btn btn-neutral float-right" title="Linux" accesskey="n" rel="next">Next <span class="fa fa-arrow-circle-right"></span></a>
+      
+      
+        <a href="cpu.html" class="btn btn-neutral" title="Architektura procesora" accesskey="p" rel="prev"><span class="fa fa-arrow-circle-left"></span> Previous</a>
+      
+    </div>
+  
+
+  <hr/>
+
+  <div role="contentinfo">
+    <p>
+        &copy; Copyright 2017, Jakub Szewczyk, Grzegorz Uriasz.
+
+    </p>
+  </div>
+  Built with <a href="http://sphinx-doc.org/">Sphinx</a> using a <a href="https://github.com/snide/sphinx_rtd_theme">theme</a> provided by <a href="https://readthedocs.org">Read the Docs</a>. 
+
+</footer>
+
+        </div>
+      </div>
+
+    </section>
+
+  </div>
+  
+
+
+  
+
+    <script type="text/javascript">
+        var DOCUMENTATION_OPTIONS = {
+            URL_ROOT:'./',
+            VERSION:'1',
+            COLLAPSE_INDEX:false,
+            FILE_SUFFIX:'.html',
+            HAS_SOURCE:  true,
+            SOURCELINK_SUFFIX: '.txt'
+        };
+    </script>
+      <script type="text/javascript" src="_static/jquery.js"></script>
+      <script type="text/javascript" src="_static/underscore.js"></script>
+      <script type="text/javascript" src="_static/doctools.js"></script>
+      <script type="text/javascript" src="_static/translations.js"></script>
+
+  
+
+  
+  
+    <script type="text/javascript" src="_static/js/theme.js"></script>
+  
+
+  
+  
+  <script type="text/javascript">
+      jQuery(function () {
+          SphinxRtdTheme.StickyNav.enable();
+      });
+  </script>
+   
+
+</body>
+</html>

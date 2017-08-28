@@ -1,0 +1,14 @@
+Each level is in a folder with a name matching this regex: ^level[0-9]*$
+Inside this folder there must be three files and one folder:
+
+home/ <- everything in this folder will be put inside the user's home folder
+
+forbidden_files <- files listed in this file will be owned by the next user and the next user's group, the files will have permissions 770
+
+password_file <- inside this file there is the name of the file/files where the password for the next level will be stored - these files are threated as they would be in the forbidden_files list
+
+suid_files <- files owned by the next level with suid bit set, these files are in the current users group, permissions 770
+
+Inside home/ there must be a README file
+The files inside home/ will have the immutable bit set 
+Inside the home directory there will be a directory fully accesible by the current user - /workspace

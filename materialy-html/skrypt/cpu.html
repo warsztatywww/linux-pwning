@@ -1,0 +1,424 @@
+
+
+<!DOCTYPE html>
+<!--[if IE 8]><html class="no-js lt-ie9" lang="en" > <![endif]-->
+<!--[if gt IE 8]><!--> <html class="no-js" lang="en" > <!--<![endif]-->
+<head>
+  <meta charset="utf-8">
+  
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  
+  <title>Architektura procesora &mdash; WWW13 PWNing 1 - dokumentacja</title>
+  
+
+  
+  
+  
+  
+
+  
+
+  
+  
+    
+
+  
+
+  
+  
+    <link rel="stylesheet" href="_static/css/theme.css" type="text/css" />
+  
+
+  
+
+  
+        <link rel="index" title="Indeks"
+              href="genindex.html"/>
+        <link rel="search" title="Szukaj" href="search.html"/>
+    <link rel="top" title="WWW13 PWNing 1 - dokumentacja" href="index.html"/>
+        <link rel="next" title="ABI języka C" href="cabi.html"/>
+        <link rel="prev" title="Instrukcje assemblera" href="allasm.html"/> 
+
+  
+  <script src="_static/js/modernizr.min.js"></script>
+
+</head>
+
+<body class="wy-body-for-nav" role="document">
+
+   
+  <div class="wy-grid-for-nav">
+
+    
+    <nav data-toggle="wy-nav-shift" class="wy-nav-side">
+      <div class="wy-side-scroll">
+        <div class="wy-side-nav-search">
+          
+
+          
+            <a href="index.html" class="icon icon-home"> WWW13 PWNing
+          
+
+          
+          </a>
+
+          
+            
+            
+              <div class="version">
+                1
+              </div>
+            
+          
+
+          
+<div role="search">
+  <form id="rtd-search-form" class="wy-form" action="search.html" method="get">
+    <input type="text" name="q" placeholder="Search docs" />
+    <input type="hidden" name="check_keywords" value="yes" />
+    <input type="hidden" name="area" value="default" />
+  </form>
+</div>
+
+          
+        </div>
+
+        <div class="wy-menu wy-menu-vertical" data-spy="affix" role="navigation" aria-label="main navigation">
+          
+            
+            
+              
+            
+            
+              <ul class="current">
+<li class="toctree-l1"><a class="reference internal" href="allasm.html">Instrukcje assemblera</a></li>
+<li class="toctree-l1 current"><a class="current reference internal" href="#">Architektura procesora</a><ul>
+<li class="toctree-l2"><a class="reference internal" href="#schemat-blokowy-elementow-procesora">Schemat blokowy „elementów” procesora</a></li>
+<li class="toctree-l2"><a class="reference internal" href="#pamiec-wirtualna">Pamięć wirtualna</a></li>
+<li class="toctree-l2"><a class="reference internal" href="#stos-i-sterta">Stos i sterta</a></li>
+<li class="toctree-l2"><a class="reference internal" href="#pierscienie-ochrony">Pierścienie ochrony</a></li>
+<li class="toctree-l2"><a class="reference internal" href="#podstawowe-operacje-logiczne-arytmetyczne-i-powiazane">Podstawowe operacje logiczne, arytmetyczne i powiązane</a></li>
+</ul>
+</li>
+<li class="toctree-l1"><a class="reference internal" href="cabi.html">ABI języka C</a></li>
+<li class="toctree-l1"><a class="reference internal" href="linux.html">Linux</a></li>
+</ul>
+
+            
+          
+        </div>
+      </div>
+    </nav>
+
+    <section data-toggle="wy-nav-shift" class="wy-nav-content-wrap">
+
+      
+      <nav class="wy-nav-top" role="navigation" aria-label="top navigation">
+        
+          <i data-toggle="wy-nav-top" class="fa fa-bars"></i>
+          <a href="index.html">WWW13 PWNing</a>
+        
+      </nav>
+
+
+      
+      <div class="wy-nav-content">
+        <div class="rst-content">
+          
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+<div role="navigation" aria-label="breadcrumbs navigation">
+
+  <ul class="wy-breadcrumbs">
+    
+      <li><a href="index.html">Docs</a> &raquo;</li>
+        
+      <li>Architektura procesora</li>
+    
+    
+      <li class="wy-breadcrumbs-aside">
+        
+            
+            <a href="_sources/cpu.rst.txt" rel="nofollow"> View page source</a>
+          
+        
+      </li>
+    
+  </ul>
+
+  
+  <hr/>
+</div>
+          <div role="main" class="document" itemscope="itemscope" itemtype="http://schema.org/Article">
+           <div itemprop="articleBody">
+            
+  <div class="section" id="architektura-procesora">
+<h1>Architektura procesora<a class="headerlink" href="#architektura-procesora" title="Stały odnośnik do tego nagłówka">¶</a></h1>
+<dl class="docutils">
+<dt>Istnieje wiele architektur procesorów, obecnie najczęściej występujące to:</dt>
+<dd><ul class="first last simple">
+<li>Intel x86 (32-bitowe, wywodzące się z procesora Intel 8086)</li>
+<li>AMD64 (64-bitowe, rozszerzenie architektury x86) - Intel posiada prawie identyczną EM64T</li>
+<li>POWER (w starszych Macach PowerPC, obecnie używana głównie na komputerach typu mainframe)</li>
+<li>ARM (32- i 64-bitowy wariant, wszechobecny w smartfonach, tabletach, a od niedawna też niektórych laptopach)</li>
+</ul>
+</dd>
+</dl>
+<p>Każda z nich charakteryzuje się innym zestawem dostępnych operacji, sposobem kodowania instrukcji, kompatybilnymi podzespołami bazowymi,
+zabezpieczeniami programów działających w userspace (o tym za chwilę), zwykle też producentem i patentami.
+Podczas naszych warsztatów zajmiemy się programami napisanymi pod architektury Intel x86 i AMD64, ponieważ występują one najczęściej na
+komputerach osobistych i serwerach, są do siebie bardzo podobne i mamy z nimi do czynienia na co dzień.</p>
+<div class="section" id="schemat-blokowy-elementow-procesora">
+<h2>Schemat blokowy „elementów” procesora<a class="headerlink" href="#schemat-blokowy-elementow-procesora" title="Stały odnośnik do tego nagłówka">¶</a></h2>
+<img alt="_images/cpudiagram.png" src="_images/cpudiagram.png" />
+<dl class="docutils">
+<dt>Opis:</dt>
+<dd><ul class="first last simple">
+<li>Random Access Memory - pamięć o dowolnym dostępie - zwykle <img class="math" src="_images/math/2ad8fa4926e412c7a86e9aff84e239db47ae6121.png" alt="\geq 2"/> GiB</li>
+<li>Cache poziomu 1, 2[, 3] - pamięc podręczna procesora, pośredniczy w dostępie do RAMu, przyspieszając go - zwykle <img class="math" src="_images/math/52a6b450b6abd8cccc7cec6a9706f9c93ae50e7d.png" alt="\leq 32"/> MiB</li>
+<li>Memory Management Unit - układ zarządzania pamięcią -
+przekierowuje dostępy do pamięci do odpowiednich adresów pamięci fizycznej (RAM lub innych urządzeń)</li>
+<li>Instruction Fetcher - pobiera kolejne instrukcje z pamięci</li>
+<li>Instruction Decoder - dekoduje instrukcje do mikrokodu - uproszczonego zestawu instrukcji, faktycznie wykonywanych przez CPU</li>
+<li>Scheduler - może zmieniać kolejność instrukcji, opóźniać ich wykonanie, „zlecać” pobranie danych z pamięci - aby jak najlepiej wykorzystać
+układy dostępne w procesorze</li>
+<li>Arithmetic and Logic Unit - wykonuje obliczenia i operacje logiczne na danych z rejestrów i pamięci</li>
+<li>Rejestry podstawowe (rax, rbx, …, r8, …, r16) - program może wykorzystywać je dowolnie do obliczeń, przekazywania i przechowywania danych</li>
+<li>Rejestry wektorowe (xmm*) - służą do obsługiwania instrukcji SIMD (Single Instruction Multiple Data), znajdujących się w rozszerzeniach
+architektury takich jak SSE, AVX</li>
+<li>Rejestry sterujące (cr0-cr3) - program nie ma do nich dostępu, system operacyjny może nimi włączać/wyłączać różne funkcje procesora oraz
+sterować m.in. MMU</li>
+<li>Rejestry stosu (rsp, rbp) - zawierają lokalizację stosu w pamięci, procesor używa ich przy wielu instrukcjach</li>
+<li>Rejestr rip - instruction pointer - zawiera lokalizację aktualnie wykonywanej instrukcji w programie, nie ma do niego bezpośredniego dostępu,
+trzeba używać specjalnych instrukcji, takich jak <code class="docutils literal"><span class="pre">call</span></code>, <code class="docutils literal"><span class="pre">jmp</span></code></li>
+</ul>
+</dd>
+</dl>
+</div>
+<div class="section" id="pamiec-wirtualna">
+<h2>Pamięć wirtualna<a class="headerlink" href="#pamiec-wirtualna" title="Stały odnośnik do tego nagłówka">¶</a></h2>
+<img alt="_images/vmem.png" src="_images/vmem.png" />
+<p>Źródło: <cite>Wiki OSDev &lt;http://wiki.osdev.org/File:Virtual_memory.png&gt;</cite></p>
+<p>Programy zwykle nie otrzymują bezpośredniego dostępu do RAMu i urządzeń podłączonych do procesora.
+Zamiast tego komunikacja następuje przez pamięć wirtualną, którą przydziela i zarządza system operacyjny.</p>
+<p>W architekturze x86 są dostępne 4 GiB pamięci wirtualnej (32-bitowe adresowanie), a w AMD64 co najmniej 256 TiB (48-bitowe adresowanie, ale pojedyncze modele procesorów mogą wspierać aż do 64 bitów).
+Pamięć ta jest podzielona na 4KiB-, 2MiB-, albo 1GiB- (system może wybrać różny rozmiar dla różnych obszarów pamięci) niepodzielne „strony”,
+każda z nich może być przypisana do danego adresu pamięci fizycznej, ograniczona pod względem odczytu lub zapisu, lub ustawiona jako „pułapka”.</p>
+<p>Taka pułapka w momencie próby dostępu do niej przerywa wykonywanie programu, pozwalając systemowi operacyjnemu na podjęcie działania,
+np. wczytanie danych do pamięci z dysku, zapisując na dysk inną stronę pamięci (swapping), co pozwala na uzyskanie dostępu do większej ilości
+pamięci niż jest dostępna w RAMie. Innym możliwym rozwiązaniem jest uznanie takiego dostępu jako błąd, wtedy na systemach *nix wysyłany jest sygnał
+SIGSEGV (segmentation fault), a na Windowsie błąd <code class="docutils literal"><span class="pre">0xc0000005</span></code>.</p>
+<p>Ciekawostka: to, że „nie wolno” zrobić dereferencji wskaźnika null, jest zaimplementowane właśnie za pomocą nie ustatwiania pierwszej strony
+pamięci wirtualnej jako dostępnej dla programów, ale np. na Linuxie za pomocą funkcji <code class="docutils literal"><span class="pre">mmap</span></code> da się uzyskać dostęp do adresu <code class="docutils literal"><span class="pre">0x0</span></code>.</p>
+</div>
+<div class="section" id="stos-i-sterta">
+<h2>Stos i sterta<a class="headerlink" href="#stos-i-sterta" title="Stały odnośnik do tego nagłówka">¶</a></h2>
+<p>Pisząc programy często korzystamy ze „stosu” i „sterty”. Są to dwa obszary pamięci, do których dostęp daje większość bibliotek standardowych
+języków programowania. Sterta to zwykle obszar znajdujący się tuż za danymi i kodem programu w pamięci wirtualnej, dlatego może być rozszerzana
+praktycznie bez ograniczeń. Natomiast stos „rośnie w dół” - jego podstawę umieszcza się w pewnym adresie w pamięci i każda kolejna dana na nim
+umieszczona zmniejsza adres jego góry, aż do osiągnięcia limitu, który najdalej może być tuż za kodem aplikacji.</p>
+<p>Trzymanie danych na stosie
+umożliwia zwykle szybszy do nich dostęp, ponieważ jest większe prawdopodobieństwo, że są one trzymane w pamięci podręcznej procesora. Pobranie
+64 bajtów danych z RAMu do pamięci podrzęcznej na obecnych procesorach zajmuje zwykle około 200-300 cykli, podczas gdy dodawanie około 1 cyklu!</p>
+<p>Jeżeli stos nie jest właściwie zabezpieczony, odniesienie się w nim odpowiednio „daleko” da dostęp do danych programu, co będzie jedną z metod
+PWNingu, którą pokażemy na warsztatach.</p>
+</div>
+<div class="section" id="pierscienie-ochrony">
+<h2>Pierścienie ochrony<a class="headerlink" href="#pierscienie-ochrony" title="Stały odnośnik do tego nagłówka">¶</a></h2>
+<div class="line-block">
+<div class="line"><br /></div>
+<div class="line">Jeden, by wszystkimi rządzić, Jeden, by wszystkie odnaleźć,</div>
+<div class="line">Jeden, by wszystkie zgromadzić i w ciemności związać</div>
+<div class="line"><br /></div>
+</div>
+<p>Jak procesor odróżnia system operacyjny od programów? Do tego służą właśnie 4 (czasami 5) „pierścieni” - określających
+uprawnienia wykonywanego kodu.</p>
+<ul class="simple">
+<li>Pierścień 0 - gdy procesor się włącza i wczytuje kod, pracuje w R0 (Ring 0) - jest to także ten pierścien, w którym pracuje system operacyjny</li>
+<li>Pierścienie 1, 2 - zwykle nie są używane, niektóre systemy (np. OS/2) używały ich dla sterowników</li>
+<li>Pierścień 3 - najbardziej ograniczony, nie może zarządzać pamięcią wirtualną ani wejściem/wyjściem, nie ma dostępu do stron „chronionych”
+To w nim właśnie działają programy użytkowników.</li>
+<li>Pierścien -1 - ma jeszcze większe uprawnienia niż R0, jest używany przy technologiach wirtualizacji, aby kontrolować maszyny wirtualne przyspieszone sprzętowo</li>
+</ul>
+<p>Jak przechodzi się między pierścieniami? Z R0 do R3 system może wykonać specjalną instrukcję skoku, która zmieni aktualny pierścień.
+Natomiast aby wrócić z programu do poziomu systemu jest kilka opcji:</p>
+<blockquote>
+<div><ul class="simple">
+<li>Poczekać na przerwanie(interrupt) - urządzenia zewnętrzne, np. zegar systemowy, mogą generować przerwania, które są obsługiwane w R0</li>
+<li>Wywołać przerwanie programowe - instrukcją <code class="docutils literal"><span class="pre">int</span></code> można zasymulować przerwanie, tak w architekturze x86 programy komunikują się z jądrem systemu operacyjnego</li>
+<li>Użyć specjalnej instrukcji - w architekturze AMD64 wprowadzono instrukcję <code class="docutils literal"><span class="pre">syscall</span></code>, która pozwala na znacznie szybsze przejście do R0 i spowrotem niż przerwania programowe</li>
+</ul>
+</div></blockquote>
+</div>
+<div class="section" id="podstawowe-operacje-logiczne-arytmetyczne-i-powiazane">
+<h2>Podstawowe operacje logiczne, arytmetyczne i powiązane<a class="headerlink" href="#podstawowe-operacje-logiczne-arytmetyczne-i-powiazane" title="Stały odnośnik do tego nagłówka">¶</a></h2>
+<p>Podstawowa składnia asm:</p>
+<div class="highlight-nasm"><div class="highlight"><pre><span></span><span class="c1">; To jest komentarz</span>
+<span class="nf">mov</span> <span class="nb">eax</span><span class="p">,</span> <span class="mi">7</span> <span class="c1">; ustaw eax na 7</span>
+<span class="nf">mov</span> <span class="nb">eax</span><span class="p">,</span> <span class="nb">ebx</span> <span class="c1">; ustaw eax na wartość ebx</span>
+<span class="nf">mov</span> <span class="nb">eax</span><span class="p">,</span> <span class="p">[</span><span class="mi">8</span><span class="p">]</span> <span class="c1">; ustaw eax na wartość z pamięci pod adresem z 8</span>
+<span class="nf">mov</span> <span class="nb">eax</span><span class="p">,</span> <span class="p">[</span><span class="nb">ebx</span><span class="p">]</span> <span class="c1">; ustaw ebx na wartość z pamięci pod adresem odczytanym z ebx</span>
+<span class="nf">mov</span> <span class="nb">eax</span><span class="p">,</span> <span class="p">[</span><span class="nb">ebx</span> <span class="o">+</span> <span class="nb">ecx</span><span class="o">*</span><span class="mi">4</span> <span class="o">+</span> <span class="mi">128</span><span class="p">]</span> <span class="c1">; ustaw eax na wartość z pamięci pod adresem</span>
+<span class="c1">; obliczonym z wyrażenia [...] (wyrażenia są bardzo ograniczone)</span>
+</pre></div>
+</div>
+<div class="line-block">
+<div class="line"><br /></div>
+<div class="line"><br /></div>
+</div>
+<ul class="simple">
+<li><code class="docutils literal"><span class="pre">mov</span> <span class="pre">CEL,</span> <span class="pre">ŹRÓDŁO</span></code> - skopiuj wartość ze źródła do celu (mogą być to rejestry, lokalizacje w pamięci lub konkretne wartości</li>
+<li><code class="docutils literal"><span class="pre">add</span> <span class="pre">CEL,</span> <span class="pre">ŹRÓDŁO</span></code> - dodaje źródło do celu</li>
+<li><code class="docutils literal"><span class="pre">sub</span> <span class="pre">CEL,</span> <span class="pre">ŹRÓDŁO</span></code> - odejmuje źródło od celu</li>
+<li><code class="docutils literal"><span class="pre">shl/shr</span> <span class="pre">CEL,</span> <span class="pre">ŹRÓDŁO</span></code> - wykonuje przesunięcie bitowe w lewo/prawo na celu o źródło bitów</li>
+<li><code class="docutils literal"><span class="pre">xchg</span> <span class="pre">A,</span> <span class="pre">B</span></code> - zamienia A z B (muszą być to rejestry bądź rejestr i miejsce w pamięci)</li>
+<li><code class="docutils literal"><span class="pre">lea</span> <span class="pre">CEL,</span> <span class="pre">ADRES</span></code> - ADRES podaje się jak miejsce w pamięci, ale jest ono obliczane i zapisywane do celu tak jak robi to <code class="docutils literal"><span class="pre">mov</span></code></li>
+<li><code class="docutils literal"><span class="pre">mul</span> <span class="pre">B</span></code> - mnoży (unsigned) rax przez B, zapisuje wynik do rdx(wyższe bity) i rax(niższe bity)</li>
+<li><code class="docutils literal"><span class="pre">imul</span> <span class="pre">B</span></code> - tak jak mul, ale wykonuje mnożenie ze znakiem (signed)</li>
+<li><code class="docutils literal"><span class="pre">imul</span> <span class="pre">CEL,</span> <span class="pre">ŹRÓDŁO</span></code> - mnoży cel przez źródło, zapisuje wynik do celu</li>
+<li><code class="docutils literal"><span class="pre">imul</span> <span class="pre">CEL,</span> <span class="pre">A,</span> <span class="pre">B</span></code> - mnoży A przez B i zapisuje do celu</li>
+<li><code class="docutils literal"><span class="pre">div</span> <span class="pre">B</span></code> - dzieli(unsigned) rdx:rax przez B, zapisuje część całkowitą do rdx, a resztę do eax</li>
+<li><code class="docutils literal"><span class="pre">idiv</span> <span class="pre">B</span></code> - tak jak div, ale dzieli ze znakiem (signed)</li>
+<li><code class="docutils literal"><span class="pre">neg</span> <span class="pre">A</span></code> - wykonuje negację A, zgodnie z metodą 2’s complement (A &lt;- ~A + 1)</li>
+<li><code class="docutils literal"><span class="pre">cdq</span></code> - Convert dword to qword - rozszerza znak rax do rdx</li>
+<li><code class="docutils literal"><span class="pre">inc</span> <span class="pre">A</span></code> - zwiększa A o 1</li>
+<li><code class="docutils literal"><span class="pre">dec</span> <span class="pre">A</span></code> - zmniejsza A o 1</li>
+<li><code class="docutils literal"><span class="pre">and/or/xor</span> <span class="pre">CEL,</span> <span class="pre">ŹRÓDŁO</span></code> - wykonuje odpowiednią operację logiczną i zapisuje wynik do celu</li>
+<li><code class="docutils literal"><span class="pre">not</span> <span class="pre">A</span></code> - neguje wszystkie bity A</li>
+</ul>
+<div class="line-block">
+<div class="line"><br /></div>
+<div class="line"><br /></div>
+</div>
+<ul class="simple">
+<li><code class="docutils literal"><span class="pre">push</span> <span class="pre">A</span></code> - odkłada wartość/rejestr A na stos</li>
+<li><code class="docutils literal"><span class="pre">pop</span> <span class="pre">A</span></code> - zdejmuje wartość ze stosu i zapisuje do A</li>
+<li><code class="docutils literal"><span class="pre">pushf</span></code> - odkłada flagi procesora na stosie</li>
+<li><code class="docutils literal"><span class="pre">popf</span></code> - zdejmuje flagi procesora ze stosu</li>
+</ul>
+<div class="line-block">
+<div class="line"><br /></div>
+<div class="line"><br /></div>
+</div>
+<ul class="simple">
+<li><code class="docutils literal"><span class="pre">nop</span></code> - nic nie robi :D</li>
+<li><code class="docutils literal"><span class="pre">naz.wa:</span></code> - etykieta, oznacza adres kolejnej instrukcji; jeżeli zaczyna się kropką, to jest lokalna dla nadrzędnej etykiety</li>
+<li><code class="docutils literal"><span class="pre">jmp</span> <span class="pre">ADRES</span></code> - wykonuje skok do adresu (ustawia rip na adres)</li>
+<li><code class="docutils literal"><span class="pre">call</span> <span class="pre">ADRES</span></code> - odkłada adres następnej instrukcji na stos, a następnie skacze do adresu (jak wywołanie funkcji)</li>
+<li><code class="docutils literal"><span class="pre">ret</span></code> - zdejmuje adres ze stosu i do niego skacze (jak powrót z funkcji)</li>
+<li><code class="docutils literal"><span class="pre">int</span> <span class="pre">BAJT</span></code> - wywołuje przerwanie programowe o podanym numerze (1-bajtowym)</li>
+<li>(tylko 64-bitowe) <code class="docutils literal"><span class="pre">syscall</span></code> - obsługuje syscall zgodnie z interfejsem systemu operacyjnego</li>
+</ul>
+<div class="line-block">
+<div class="line"><br /></div>
+<div class="line"><br /></div>
+</div>
+<ul class="simple">
+<li><code class="docutils literal"><span class="pre">test</span> <span class="pre">A,</span> <span class="pre">B</span></code> - wykonuje and bitowy na A i B, flaga znaku jest ustawiana na najbardziej znaczący bit, zera jeżeli wynik jest zerem, parzystości, gdy wynik ma parzystą liczbę jedynek</li>
+<li><code class="docutils literal"><span class="pre">cmp</span> <span class="pre">A,</span> <span class="pre">B</span></code> - porównuje A z B i ustawia odpowiednie flagi</li>
+<li><code class="docutils literal"><span class="pre">je/jz</span> <span class="pre">ADRES</span></code> - skacze gdy ZF=1 (cmp: A==B)</li>
+<li><code class="docutils literal"><span class="pre">jne/jnz</span> <span class="pre">ADRES</span></code> - skacze gdy ZF=0 (cmp: A!=B)</li>
+<li><code class="docutils literal"><span class="pre">jg</span> <span class="pre">ADRES</span></code> - skacze gdy SF=OF;ZF=0 (cmp: A&gt;B)</li>
+<li><code class="docutils literal"><span class="pre">jge</span> <span class="pre">ADRES</span></code> - skacze gdy SF=OF;ZF=1 (cmp: A&gt;=B)</li>
+<li><code class="docutils literal"><span class="pre">ja</span> <span class="pre">ADRES</span></code> - tak jak jg, ale porównanie bez znaku</li>
+<li><code class="docutils literal"><span class="pre">jae</span> <span class="pre">ADRES</span></code> - tak jak jge, ale porównanie bez znaku</li>
+<li><code class="docutils literal"><span class="pre">jl</span> <span class="pre">ADRES</span></code> - skacze gdy SF!=OF (cmp: A&gt;B)</li>
+<li><code class="docutils literal"><span class="pre">jle</span> <span class="pre">ADRES</span></code> - skacze gdy SF!=OF lub ZF=1 (cmp: A&gt;=B)</li>
+<li><code class="docutils literal"><span class="pre">jb(e)</span> <span class="pre">ADRES</span></code> - są dla jl i jle tak jak ja i jae dla jg i jge</li>
+<li><code class="docutils literal"><span class="pre">jo</span> <span class="pre">ADRES</span></code> - skacze gdy OF=1 (overflow flag)</li>
+<li><code class="docutils literal"><span class="pre">jno</span> <span class="pre">ADRES</span></code> - skacze gdy OF=0 (overflow flag)</li>
+<li><code class="docutils literal"><span class="pre">js</span> <span class="pre">ADRES</span></code> - skacze gdy SF=1 (sign flag)</li>
+<li><code class="docutils literal"><span class="pre">jns</span> <span class="pre">ADRES</span></code> - skacze gdy SF=0 (sign flag)</li>
+<li><code class="docutils literal"><span class="pre">loop</span> <span class="pre">ADRES</span></code> - zmniejsza rcx o 1, skacze jeżeli rcx jest jeszcze większe od 0</li>
+<li><code class="docutils literal"><span class="pre">loop(e/ne/z/nz)</span></code> - jeżeli warunek jest spełniony to działa tak jak loop, jeżeli nie to jest pomijana</li>
+</ul>
+</div>
+</div>
+
+
+           </div>
+           <div class="articleComments">
+            
+           </div>
+          </div>
+          <footer>
+  
+    <div class="rst-footer-buttons" role="navigation" aria-label="footer navigation">
+      
+        <a href="cabi.html" class="btn btn-neutral float-right" title="ABI języka C" accesskey="n" rel="next">Next <span class="fa fa-arrow-circle-right"></span></a>
+      
+      
+        <a href="allasm.html" class="btn btn-neutral" title="Instrukcje assemblera" accesskey="p" rel="prev"><span class="fa fa-arrow-circle-left"></span> Previous</a>
+      
+    </div>
+  
+
+  <hr/>
+
+  <div role="contentinfo">
+    <p>
+        &copy; Copyright 2017, Jakub Szewczyk, Grzegorz Uriasz.
+
+    </p>
+  </div>
+  Built with <a href="http://sphinx-doc.org/">Sphinx</a> using a <a href="https://github.com/snide/sphinx_rtd_theme">theme</a> provided by <a href="https://readthedocs.org">Read the Docs</a>. 
+
+</footer>
+
+        </div>
+      </div>
+
+    </section>
+
+  </div>
+  
+
+
+  
+
+    <script type="text/javascript">
+        var DOCUMENTATION_OPTIONS = {
+            URL_ROOT:'./',
+            VERSION:'1',
+            COLLAPSE_INDEX:false,
+            FILE_SUFFIX:'.html',
+            HAS_SOURCE:  true,
+            SOURCELINK_SUFFIX: '.txt'
+        };
+    </script>
+      <script type="text/javascript" src="_static/jquery.js"></script>
+      <script type="text/javascript" src="_static/underscore.js"></script>
+      <script type="text/javascript" src="_static/doctools.js"></script>
+      <script type="text/javascript" src="_static/translations.js"></script>
+
+  
+
+  
+  
+    <script type="text/javascript" src="_static/js/theme.js"></script>
+  
+
+  
+  
+  <script type="text/javascript">
+      jQuery(function () {
+          SphinxRtdTheme.StickyNav.enable();
+      });
+  </script>
+   
+
+</body>
+</html>

