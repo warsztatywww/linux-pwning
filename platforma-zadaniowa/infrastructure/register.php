@@ -12,7 +12,7 @@ if(isset($_POST['username']) && isset($_POST['email']) && isset($_POST['password
   {
     error_message("Password mismatch");
   }
-  else if(preg_match("/^[0-9a-zA-z]*@[0-9a-zA-z]*.[0-9a-zA-z]*$/", $email)==1)
+  else if(filter_var($email, FILTER_VALIDATE_EMAIL))
   {
     if(preg_match("/^[0-9a-zA-Z]*$/", $username) === 1)
     {

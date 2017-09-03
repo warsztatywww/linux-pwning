@@ -8,7 +8,7 @@ hashedpass=$(python3 -c 'import crypt; print(crypt.crypt("'"$2"'", crypt.mksalt(
 useradd -s /bin/bash -U -p "$hashedpass" -m -b /haxing "$1"
 
 echo 'cat /haxing/'"$1"'/README;
-curl "localhost/log_progress.php?user='"$1"'&token='"$4"'";
+curl -L -k "localhost/log_progress.php?user='"$1"'&token='"$4"'";
 zsh;
 logout;' > /haxing/"$1"/.bash_profile
 

@@ -4,8 +4,6 @@ require_once("config.php")
 
 <?php require_once("header.php"); ?>
 
-<div id="trol" style="position: fixed; top: 7%;" ></div>
-
 <h1>Dashboard</h1>
 <?php
 if($_SESSION['logged'])
@@ -35,7 +33,9 @@ if($_SESSION['logged'])
     echo '</table>';
   }
 }
+
 ?>
+
 <!--<p class="lead">Owocnych warsztatów :)</p>-->
 <table class="table table-bordered table-striped">
   <tr> <th>Nickname</th> <th>Progress</th> </tr>
@@ -51,5 +51,14 @@ if($_SESSION['logged'])
       }
    ?>
 </table>
+
+<script>
+function autoRefresh()
+{
+	   window.location.reload();
+}
+
+setInterval('autoRefresh()', 5000);
+</script>
 
 <?php require_once("footer.php"); ?>
